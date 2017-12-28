@@ -6,7 +6,7 @@
 #    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/02 17:37:24 by vparis            #+#    #+#              #
-#    Updated: 2017/12/27 17:31:35 by valentin         ###   ########.fr        #
+#    Updated: 2017/12/28 17:01:00 by valentin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,8 @@ SRCD		=	srcs
 INCD		=	includes
 LIBFTD		=	libft
 
-SRCS		=	$(SRCD)/main.c
+SRCS		=	$(SRCD)/main.c \
+				$(SRCD)/tp_pool.c $(SRCD)/tp_thread.c
 OBJS		=	$(patsubst %.c, %.o, $(SRCS))
 
 CFLAGS		+=	-I$(INCD) -I$(LIBFTD)/includes -L$(LIBFTD) -O2
