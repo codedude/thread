@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
+#    By: vparis <vparis@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/02 17:37:24 by vparis            #+#    #+#              #
-#    Updated: 2017/12/28 17:01:00 by valentin         ###   ########.fr        #
+#    Updated: 2018/01/02 15:48:56 by vparis           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,14 +17,14 @@ SRCD		=	srcs
 INCD		=	includes
 LIBFTD		=	libft
 
-SRCS		=	$(SRCD)/main.c \
+SRCS		=	$(SRCD)/main.c $(SRCD)/algo.c $(SRCD)/tp_queue.c \
 				$(SRCD)/tp_pool.c $(SRCD)/tp_thread.c
 OBJS		=	$(patsubst %.c, %.o, $(SRCS))
 
-CFLAGS		+=	-I$(INCD) -I$(LIBFTD)/includes -L$(LIBFTD) -O2
+CFLAGS		+=	-I$(INCD) -I$(LIBFTD)/includes -L$(LIBFTD)
 #Warnigs and debug
 LDFLAGS		+=	-Wall -Wextra -ansi -pedantic -Wno-unused-result
-LDLIBS		+=	-lft -pthread
+LDLIBS		+=	-lft -lpthread
 
 .PHONY: clean fclean re
 

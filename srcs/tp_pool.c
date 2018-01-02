@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tp_pool.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/01 13:49:04 by valentin         ###   ########.fr       */
+/*   Updated: 2018/01/02 16:06:50 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ t_tpool	*tp_create(int nb_threads, int flag)
 {
 	t_tpool	*tmp;
 
-	if (nb_threads < TP_MIN_THREADS || nb_threads > TP_MAX_THREADS)
+	if (nb_threads < TP_MIN_THREADS || nb_threads > TP_MAX_THREADS
+		|| flag < 0 || flag > 1)
 		return (NULL);
 	if ((tmp = (t_tpool *)malloc(sizeof(t_tpool))) == NULL)
 		return (NULL);
@@ -47,6 +48,12 @@ t_tpool	*tp_create(int nb_threads, int flag)
 	tmp->threads = (t_thread *)ft_memalloc(sizeof(t_thread) * nb_threads);
 	if (tmp->threads == NULL)
 	{
+		free(tmp);
+		return (NULL);
+	}
+	if ((tmp->queue = tp_queue_new()) == NULL)
+	{
+		free(tmp->threads);
 		free(tmp);
 		return (NULL);
 	}
@@ -72,6 +79,7 @@ void	tp_destroy(t_tpool **tp)
 		i++;
 	}
 	free(tp_t->threads);
+	tp_queue_del(tp_t->queue);
 	ft_bzero((void *)tp_t->threads, sizeof(t_thread) * tp_t->size);
 	free(tp_t);
 	*tp = NULL;
