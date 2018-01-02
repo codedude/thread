@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 18:54:21 by valentin          #+#    #+#             */
-/*   Updated: 2017/12/28 17:51:43 by valentin         ###   ########.fr       */
+/*   Updated: 2018/01/01 13:48:37 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ int					tp_wait_for_queue(t_tpool **tp);
 ** tp_thread.c
 */
 
-void				*tp_thread_start(void *param);
-int					tp_getnbr_proc(void);
+int					th_start(t_thread *th, void *(*f)(void *));
+void				*th_fun_start(void *param);
+int					th_getnbr_proc(void);
 
 #endif

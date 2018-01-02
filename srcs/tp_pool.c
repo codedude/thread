@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2017/12/28 17:43:22 by valentin         ###   ########.fr       */
+/*   Updated: 2018/01/01 13:49:04 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "libft.h"
 #include "ft_tpool.h"
 
-static int	tp_start_all(t_tpool *tp)
+static int	tp_start_all(t_tpool *tp, int flag)
 {
 	int		i;
 
@@ -24,9 +24,11 @@ static int	tp_start_all(t_tpool *tp)
 	{
 		pthread_mutex_init(&(tp->threads[i].mutex), NULL);
 		pthread_cond_init(&(tp->threads[i].cond), NULL);
-		if (pthread_create(&(tp->threads[i].thread), NULL, &tp_thread_start,
-			&(tp->threads[i])) != 0)
-			return (ERROR);
+		if (flag == TP_ON_START)
+		{
+			if (th_start(&(tp->threads[i]), &th_fun_start) == ERROR)
+				return (ERROR);
+		}
 		i++;
 	}
 	return (SUCCESS);
@@ -48,11 +50,8 @@ t_tpool	*tp_create(int nb_threads, int flag)
 		free(tmp);
 		return (NULL);
 	}
-	if (flag == TP_ON_START)
-	{
-		if (tp_start_all(tmp) == ERROR)
-			tp_destroy(&tmp);
-	}
+	if (tp_start_all(tmp, flag) == ERROR)
+		tp_destroy(&tmp);
 	return (tmp);
 }
 

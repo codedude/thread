@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 16:15:22 by valentin          #+#    #+#             */
-/*   Updated: 2017/12/28 17:54:33 by valentin         ###   ########.fr       */
+/*   Updated: 2018/01/01 13:49:17 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int			main(int argc, char **argv)
 				TP_MIN_THREADS, TP_MAX_THREADS);
 			return (ERROR);
 		}
-		printf("Number of procs available : %d\n", tp_getnbr_proc());
+		printf("Number of procs available : %d\n", th_getnbr_proc());
 		printf("Start application with %d threads, ON_START=%d mode\n\n"
 			, nb_threads, flag);
 		if (start(nb_threads, flag) == ERROR)

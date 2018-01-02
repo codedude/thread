@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2017/12/28 17:53:59 by valentin         ###   ########.fr       */
+/*   Updated: 2018/01/01 13:48:27 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/sysinfo.h>
+#include "libft.h"
 #include "ft_tpool.h"
 
-void	*tp_thread_start(void *param)
+void	*th_fun_start(void *param)
 {
 	t_thread	*th;
 
@@ -34,7 +35,14 @@ void	*tp_thread_start(void *param)
 	return (param);
 }
 
-int		tp_getnbr_proc(void)
+int		th_start(t_thread *th, void *(*f)(void *))
+{
+	if (pthread_create(&(th->thread), NULL, f, th) != 0)
+		return (ERROR);
+	return (SUCCESS);
+}
+
+int		th_getnbr_proc(void)
 {
 	return (get_nprocs());
 }
