@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/02 16:06:50 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/03 16:55:36 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	tp_destroy(t_tpool **tp)
 		i++;
 	}
 	free(tp_t->threads);
-	tp_queue_del(tp_t->queue);
+	tp_queue_del(&(tp_t->queue));
 	ft_bzero((void *)tp_t->threads, sizeof(t_thread) * tp_t->size);
 	free(tp_t);
 	*tp = NULL;

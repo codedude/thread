@@ -1,5 +1,4 @@
 thread
 *.o
 *.a
-**/*.o
-**/*.a
+libft/*.a

@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/02 12:05:04 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/03 17:57:47 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,16 @@
 #include "libft.h"
 #include "ft_tpool.h"
 
+int		th_signal(t_thread *th)
+{
+	pthread_mutex_lock(&(th->mutex));
+	th->state = TP_BUSY;
+	if (pthread_cond_signal(&(th->cond)) != 0)
+		return (ERROR);
+	pthread_mutex_unlock(&(th->mutex));
+	return (SUCCESS);
+}
+
 void	*th_fun_start(void *param)
 {
 	t_thread	*th;
@@ -29,14 +39,17 @@ void	*th_fun_start(void *param)
 	th = (t_thread *)param;
 	printf("Thread %lu ready\n", (t_u64)th->thread);
 	pthread_mutex_lock(&(th->mutex));
-	if (pthread_cond_wait(&(th->cond), &(th->mutex)) != 0)
-		return (param);
-	th->state = TP_BUSY;
-	pthread_mutex_lock(&(th->mutex));
+	while (th->state == TP_READY)
+		if (pthread_cond_wait(&(th->cond), &(th->mutex)) != 0)
+			return (param);
+	pthread_mutex_unlock(&(th->mutex));
 	printf("Thread %lu busy\n", (t_u64)th->thread);
 	if (th->f != NULL)
 		(*th->f)(th->data);
 	printf("Thread %lu done\n", (t_u64)th->thread);
+	pthread_mutex_lock(&(th->mutex));
+	th->state = TP_READY;
+	pthread_mutex_unlock(&(th->mutex));
 	return (param);
 }
 
