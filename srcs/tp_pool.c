@@ -6,12 +6,13 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/04 13:27:20 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/04 19:24:08 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
 #include "libft.h"
 #include "ft_tpool.h"
 
@@ -19,6 +20,7 @@ int				tp_wait_for_queue(t_tpool *tp)
 {
 	int			i;
 	t_tp_data	*tp_data;
+	useconds_t	usec_wait;
 
 	i = 0;
 	while ((tp_data = (t_tp_data *)tp_queue_shift(tp->queue)) != NULL)
@@ -34,10 +36,14 @@ int				tp_wait_for_queue(t_tpool *tp)
 		i++;
 	}
 	i = 0;
+	usec_wait = 1000 * 4;
 	while (i < tp->size)
 	{
+		/*pthread_join(tp->threads[i].thread, &(tp->threads[i].retval));
+		i++;*/
 		if (tp->threads[i].state == TP_READY)
 			i++;
+		usleep(usec_wait);
 	}
 	return (SUCCESS);
 }
@@ -124,7 +130,7 @@ void	tp_destroy(t_tpool **tp)
 	free(tp_t->threads);
 	tp_queue_del(&(tp_t->queue));
 	ft_bzero((void *)tp_t->threads, sizeof(t_thread) * tp_t->size);
-	free(tp_t);
+	free(*tp);
 	*tp = NULL;
 }
 

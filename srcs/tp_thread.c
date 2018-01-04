@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/04 12:41:41 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/04 19:22:45 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,16 @@ void	*th_fun_start(void *param)
 	th = (t_thread *)param;
 	while (1)
 	{
-		printf("Thread %lu ready\n", (t_u64)th->thread);
+		/*printf("Thread %lu ready\n", (t_u64)th->thread);*/
 		pthread_mutex_lock(&(th->mutex));
 		while (th->state == TP_READY)
 			if (pthread_cond_wait(&(th->cond), &(th->mutex)) != 0)
 				return (param);
 		pthread_mutex_unlock(&(th->mutex));
-		printf("Thread %lu busy\n", (t_u64)th->thread);
+		/*printf("Thread %lu busy\n", (t_u64)th->thread);*/
 		if (th->f != NULL)
 			(*th->f)(th->data);
-		printf("Thread %lu done\n", (t_u64)th->thread);
+		/*printf("Thread %lu done\n", (t_u64)th->thread);*/
 		pthread_mutex_lock(&(th->mutex));
 		th->state = TP_READY;
 		pthread_mutex_unlock(&(th->mutex));

@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/02 12:10:28 by vparis            #+#    #+#             */
-/*   Updated: 2018/01/04 12:52:51 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/04 19:31:53 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@ int		algo_start(t_tpool *tp, int **data, size_t size)
 		i++;
 	}
 	tp_wait_for_queue(tp);
+	/*
 	printf("All jobs are done\n");
+	*/
 	return (SUCCESS);
 }
 
