@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 16:15:22 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/03 17:20:36 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/04 12:46:50 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static int	start(int nb_threads, int flag, size_t size)
 		return (ERROR);
 	}
 	printf("Thread pool created\n");
-	if (algo_start(&tp, data, size) == ERROR)
+	if (algo_start(tp, data, size) == ERROR)
 		printf("Error while running algo_start\n");
 	tp_destroy(&tp);
 	printf("Thread pool destroyed\n");

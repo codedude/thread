@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/02 12:11:03 by vparis            #+#    #+#             */
-/*   Updated: 2018/01/03 17:55:20 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/04 12:55:28 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ typedef struct	s_algo {
 }				t_algo;
 
 int		**algo_init(size_t size);
-int		algo_fun(void *data);
 void	algo_free(int **data, size_t size);
 
-int		algo_start(t_tpool **tp, int **data, size_t size);
+int		algo_start(t_tpool *tp, int **data, size_t size);
+int		algo_fun(void *data);
 
 #endif

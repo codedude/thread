@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/03 16:55:36 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/04 13:27:20 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,48 @@
 #include <pthread.h>
 #include "libft.h"
 #include "ft_tpool.h"
+
+int				tp_wait_for_queue(t_tpool *tp)
+{
+	int			i;
+	t_tp_data	*tp_data;
+
+	i = 0;
+	while ((tp_data = (t_tp_data *)tp_queue_shift(tp->queue)) != NULL)
+	{
+		if (tp->flag == TP_ON_EXEC)
+		{
+			if (th_start(&(tp->threads[i]), &th_fun_start) == ERROR)
+				return (ERROR);
+		}
+		tp->threads[i].f = tp_data->f;
+		tp->threads[i].data = tp_data->data;
+		th_signal(&(tp->threads[i]));
+		i++;
+	}
+	i = 0;
+	while (i < tp->size)
+	{
+		if (tp->threads[i].state == TP_READY)
+			i++;
+	}
+	return (SUCCESS);
+}
+
+int			tp_add_task(t_tpool *tp, int (*f)(void *), void *data,
+						size_t size)
+{
+	t_tp_data	tp_data;
+
+	if ((tp_data.data = malloc(size)) == NULL)
+		return (ERROR);
+	ft_memcpy((void *)tp_data.data, data, size);
+	tp_data.f = f;
+	if (tp_queue_add(tp->queue, (void *)&tp_data, sizeof(t_tp_data))
+		== ERROR)
+		return (ERROR);
+	return (SUCCESS);
+}
 
 static int	tp_start_all(t_tpool *tp, int flag)
 {
@@ -41,6 +83,8 @@ t_tpool	*tp_create(int nb_threads, int flag)
 	if (nb_threads < TP_MIN_THREADS || nb_threads > TP_MAX_THREADS
 		|| flag < 0 || flag > 1)
 		return (NULL);
+	if (nb_threads == 0)
+		nb_threads = th_getnbr_proc();
 	if ((tmp = (t_tpool *)malloc(sizeof(t_tpool))) == NULL)
 		return (NULL);
 	tmp->size = nb_threads;
@@ -53,8 +97,7 @@ t_tpool	*tp_create(int nb_threads, int flag)
 	}
 	if ((tmp->queue = tp_queue_new()) == NULL)
 	{
-		free(tmp->threads);
-		free(tmp);
+		tp_destroy(&tmp);
 		return (NULL);
 	}
 	if (tp_start_all(tmp, flag) == ERROR)
