@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/04 19:22:45 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/05 14:04:05 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,50 +22,60 @@
 #include "libft.h"
 #include "ft_tpool.h"
 
-int		th_signal(t_thread *th)
+static int	get_thread_id(t_tpool *tp, pthread_t id)
 {
-	pthread_mutex_lock(&(th->mutex));
-	th->state = TP_BUSY;
-	if (pthread_cond_signal(&(th->cond)) != 0)
-		return (ERROR);
-	pthread_mutex_unlock(&(th->mutex));
-	return (SUCCESS);
+	int	i;
+
+	i = 0;
+	while (i < tp->size)
+	{
+		if (tp->threads[i].thread == id)
+			return (i);
+		i++;
+	}
+	return (0);
 }
 
-void	*th_fun_start(void *param)
+void		*th_fun_start(void *param)
 {
+	t_tpool		*tp;
 	t_thread	*th;
 
-	th = (t_thread *)param;
+	tp = (t_tpool *)param;
+	th = &(tp->threads[get_thread_id(tp, pthread_self())]);
 	while (1)
 	{
-		/*printf("Thread %lu ready\n", (t_u64)th->thread);*/
 		pthread_mutex_lock(&(th->mutex));
-		while (th->state == TP_READY)
-			if (pthread_cond_wait(&(th->cond), &(th->mutex)) != 0)
-				return (param);
+		while (th->state == TH_READY)
+			pthread_cond_wait(&(th->cond), &(th->mutex));
 		pthread_mutex_unlock(&(th->mutex));
-		/*printf("Thread %lu busy\n", (t_u64)th->thread);*/
-		if (th->f != NULL)
-			(*th->f)(th->data);
-		/*printf("Thread %lu done\n", (t_u64)th->thread);*/
+		pthread_mutex_lock(&(tp->mutex));
+		tp->working_threads += 1;
+		pthread_mutex_unlock(&(tp->mutex));
+		if (th->data->f != NULL)
+			(*th->data->f)(th->data->param);
 		pthread_mutex_lock(&(th->mutex));
-		th->state = TP_READY;
+		th->state = TH_READY;
 		pthread_mutex_unlock(&(th->mutex));
+		pthread_mutex_lock(&(tp->mutex));
+		tp->working_threads -= 1;
+		if (tp->working_threads == 0)
+			pthread_cond_signal(&(tp->cond));
+		pthread_mutex_unlock(&(tp->mutex));
 	}
 	return (param);
 }
 
-int		th_start(t_thread *th, void *(*f)(void *))
+int			th_start(t_tpool *tp, int i, void *(*f)(void *))
 {
-	if (pthread_create(&(th->thread), NULL, f, th) != 0)
+	if (pthread_create(&(tp->threads[i].thread), NULL, f, tp) != 0)
 		return (ERROR);
 	return (SUCCESS);
 }
 
 #ifdef __APPLE__
 
-int		th_getnbr_proc(void)
+int			th_getnbr_proc(void)
 {
 	int		mib[2];
 	int		maxproc;
@@ -80,7 +90,7 @@ int		th_getnbr_proc(void)
 
 #elif __linux
 
-int		th_getnbr_proc(void)
+int			th_getnbr_proc(void)
 {
 	return (get_nprocs());
 }

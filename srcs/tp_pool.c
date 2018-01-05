@@ -6,45 +6,58 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/04 19:24:08 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/05 14:08:16 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
 #include "libft.h"
 #include "ft_tpool.h"
 
-int				tp_wait_for_queue(t_tpool *tp)
+static int	tp_count_ready(t_tpool *tp)
+{
+	int	i;
+	int	n;
+
+	i = 0;
+	n = 0;
+	while (i < tp->size)
+	{
+		if (tp->threads[i].state == TH_READY)
+			n++;
+		i++;
+	}
+	return (n);
+}
+
+int			tp_wait_for_queue(t_tpool *tp)
 {
 	int			i;
 	t_tp_data	*tp_data;
-	useconds_t	usec_wait;
 
+	tp->working_threads = 0;
 	i = 0;
 	while ((tp_data = (t_tp_data *)tp_queue_shift(tp->queue)) != NULL)
 	{
-		if (tp->flag == TP_ON_EXEC)
+		if ((tp->flag & TP_MASK_ON) == TP_ON_EXEC)
 		{
-			if (th_start(&(tp->threads[i]), &th_fun_start) == ERROR)
+			if (th_start(tp, i, &th_fun_start) == ERROR)
 				return (ERROR);
 		}
-		tp->threads[i].f = tp_data->f;
-		tp->threads[i].data = tp_data->data;
-		th_signal(&(tp->threads[i]));
+		tp->threads[i].data = tp_data;
+		pthread_mutex_lock(&(tp->threads[i].mutex));
+		tp->threads[i].state = TH_BUSY;
+		pthread_cond_signal(&(tp->threads[i].cond));
+		pthread_mutex_unlock(&(tp->threads[i].mutex));
 		i++;
 	}
-	i = 0;
-	usec_wait = 1000 * 4;
-	while (i < tp->size)
-	{
-		/*pthread_join(tp->threads[i].thread, &(tp->threads[i].retval));
-		i++;*/
-		if (tp->threads[i].state == TP_READY)
-			i++;
-		usleep(usec_wait);
-	}
+	pthread_mutex_lock(&(tp->mutex));
+	while (tp_count_ready(tp) < tp->size || tp->working_threads > 0)
+		pthread_cond_wait(&(tp->cond), &(tp->mutex));
+	pthread_mutex_unlock(&(tp->mutex));
 	return (SUCCESS);
 }
 
@@ -53,9 +66,9 @@ int			tp_add_task(t_tpool *tp, int (*f)(void *), void *data,
 {
 	t_tp_data	tp_data;
 
-	if ((tp_data.data = malloc(size)) == NULL)
+	if ((tp_data.param = malloc(size)) == NULL)
 		return (ERROR);
-	ft_memcpy((void *)tp_data.data, data, size);
+	ft_memcpy((void *)tp_data.param, data, size);
 	tp_data.f = f;
 	if (tp_queue_add(tp->queue, (void *)&tp_data, sizeof(t_tp_data))
 		== ERROR)
@@ -72,9 +85,9 @@ static int	tp_start_all(t_tpool *tp, int flag)
 	{
 		pthread_mutex_init(&(tp->threads[i].mutex), NULL);
 		pthread_cond_init(&(tp->threads[i].cond), NULL);
-		if (flag == TP_ON_START)
+		if ((flag & TP_MASK_ON) == TP_ON_START)
 		{
-			if (th_start(&(tp->threads[i]), &th_fun_start) == ERROR)
+			if (th_start(tp, i, &th_fun_start) == ERROR)
 				return (ERROR);
 		}
 		i++;
@@ -82,12 +95,11 @@ static int	tp_start_all(t_tpool *tp, int flag)
 	return (SUCCESS);
 }
 
-t_tpool	*tp_create(int nb_threads, int flag)
+t_tpool		*tp_create(int nb_threads, int flag)
 {
 	t_tpool	*tmp;
 
-	if (nb_threads < TP_MIN_THREADS || nb_threads > TP_MAX_THREADS
-		|| flag < 0 || flag > 1)
+	if (nb_threads < TP_MIN_THREADS || nb_threads > TP_MAX_THREADS)
 		return (NULL);
 	if (nb_threads == 0)
 		nb_threads = th_getnbr_proc();
@@ -95,6 +107,9 @@ t_tpool	*tp_create(int nb_threads, int flag)
 		return (NULL);
 	tmp->size = nb_threads;
 	tmp->flag = flag;
+	tmp->working_threads = 0;
+	pthread_mutex_init(&(tmp->mutex), NULL);
+	pthread_cond_init(&(tmp->cond), NULL);
 	tmp->threads = (t_thread *)ft_memalloc(sizeof(t_thread) * nb_threads);
 	if (tmp->threads == NULL)
 	{
@@ -111,7 +126,7 @@ t_tpool	*tp_create(int nb_threads, int flag)
 	return (tmp);
 }
 
-void	tp_destroy(t_tpool **tp)
+void		tp_destroy(t_tpool **tp)
 {
 	int			i;
 	t_tpool		*tp_t;
@@ -130,7 +145,8 @@ void	tp_destroy(t_tpool **tp)
 	free(tp_t->threads);
 	tp_queue_del(&(tp_t->queue));
 	ft_bzero((void *)tp_t->threads, sizeof(t_thread) * tp_t->size);
+	pthread_mutex_destroy(&(tp_t->mutex));
+	pthread_cond_destroy(&(tp_t->cond));
 	free(*tp);
 	*tp = NULL;
 }
-

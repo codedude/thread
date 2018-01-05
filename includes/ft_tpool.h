@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 18:54:21 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/04 12:58:05 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/05 14:03:00 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,39 +14,47 @@
 # define FT_TPOOL_H
 
 # include <pthread.h>
+# include <unistd.h>
 # include "libft.h"
 # include "ft_list.h"
 
+# define TP_MASK_MODE	0xF0
+# define TP_MASK_ON		0x0F
+# define TP_MODE_ALGO	0x00
+# define TP_MODE_GAME	0x10
+# define TP_ON_START	0x00
+# define TP_ON_EXEC		0x01
 # define TP_MIN_THREADS	0
 # define TP_MAX_THREADS	64
-# define TP_READY		0
-# define TP_BUSY		1
-# define TP_ON_EXEC		0
-# define TP_ON_START	1
+# define TP_CHILD		0
+# define TP_PARENT		1
+# define TH_READY		0
+# define TH_BUSY		1
 
-typedef struct	s_tp_data {
-	int			(*f)(void *);
-	void		*data;
-}				t_tp_data;
+typedef struct		s_tp_data {
+	int				(*f)(void *);
+	void			*param;
+}					t_tp_data;
 
-typedef struct	s_tp_queue {
-	size_t	size;
-	t_list	*tail;
-	t_list	*head;
-}				t_tp_queue;
+typedef struct		s_tp_queue {
+	size_t			size;
+	t_list			*tail;
+	t_list			*head;
+}					t_tp_queue;
 
 typedef struct		s_thread {
 	pthread_t		thread;
 	pthread_cond_t	cond;
 	pthread_mutex_t	mutex;
-	void			*retval;
 	int				state;
-	int				(*f)(void *);
-	void			*data;
+	t_tp_data		*data;
 }					t_thread;
 
 typedef struct		s_tpool {
 	int				size;
+	int				working_threads;
+	pthread_cond_t	cond;
+	pthread_mutex_t	mutex;
 	int				flag;
 	t_thread		*threads;
 	t_tp_queue		*queue;
@@ -66,8 +74,8 @@ int					tp_wait_for_queue(t_tpool *tp);
 ** tp_thread.c
 */
 
-int					th_signal(t_thread *th);
-int					th_start(t_thread *th, void *(*f)(void *));
+int					th_signal(t_thread *th, int which);
+int					th_start(t_tpool *tp, int i, void *(*f)(void *));
 void				*th_fun_start(void *param);
 int					th_getnbr_proc(void);
 

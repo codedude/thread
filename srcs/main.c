@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 16:15:22 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/04 19:08:50 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/05 10:20:40 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,27 +44,15 @@ int			main(int argc, char **argv)
 	int		flag;
 	size_t	size;
 
-	if (argc == 4)
+	if (argc == 5)
 	{
 		nb_threads = ft_atoi(argv[1]);
-		flag = ft_atoi(argv[2]);
-		size = (size_t)ft_atoi(argv[3]);
-		if (nb_threads < TP_MIN_THREADS || nb_threads > TP_MAX_THREADS
-			|| flag < 0 || flag > 1 || size < 1 || size > 1000000)
-		{
-			printf("thread : %d <= NB_THREAD <= %d, 0 <= FLAG <= 1"
-				"1 <= SIZE <= 1 000 000\n", TP_MIN_THREADS, TP_MAX_THREADS);
-			return (ERROR);
-		}
-		/*
-		printf("Number of procs available : %d\n", th_getnbr_proc());
-		printf("Start application with %d threads, ON_START=%d mode\n\n"
-			, nb_threads, flag);
-		*/
+		flag = (ft_atoi(argv[2]) << 4) | ft_atoi(argv[3]);
+		size = (size_t)ft_atoi(argv[4]);
 		if (start(nb_threads, flag, size) == ERROR)
 			return (ERROR);
 	}
 	else
-		printf("thread : ./thread NB_THREADS FLAG SIZE\n");
+		printf("thread : ./thread NB_THREADS MODE ON SIZE\n");
 	return (SUCCESS);
 }
