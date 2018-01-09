@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tp_pool.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/05 14:08:16 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/09 18:08:50 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,8 +143,8 @@ void		tp_destroy(t_tpool **tp)
 		i++;
 	}
 	free(tp_t->threads);
+	tp_t->threads = NULL;
 	tp_queue_del(&(tp_t->queue));
-	ft_bzero((void *)tp_t->threads, sizeof(t_thread) * tp_t->size);
 	pthread_mutex_destroy(&(tp_t->mutex));
 	pthread_cond_destroy(&(tp_t->cond));
 	free(*tp);

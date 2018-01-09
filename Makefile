@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vparis <vparis@student.42.fr>              +#+  +:+       +#+         #
+#    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/02 17:37:24 by vparis            #+#    #+#              #
-#    Updated: 2018/01/04 12:42:35 by vparis           ###   ########.fr        #
+#    Updated: 2018/01/09 18:06:46 by valentin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ OBJS		=	$(patsubst %.c, %.o, $(SRCS))
 
 CFLAGS		+=	-I$(INCD) -I$(LIBFTD)/includes
 #Warnigs and debug
-LDFLAGS		+=	-Wall -Wextra -ansi -pedantic -Wno-unused-result
+LDFLAGS		+=	-Wall -Wextra -ansi -pedantic -Wno-unused-result -g
 LDLIBS		+=	-L$(LIBFTD) -lft -lpthread
 
 .PHONY: clean fclean re

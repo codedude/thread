@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tp_thread.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/27 22:19:36 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/05 14:04:05 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/09 18:31:02 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 #include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "libft.h"
 #include "ft_tpool.h"
@@ -55,6 +56,8 @@ void		*th_fun_start(void *param)
 		if (th->data->f != NULL)
 			(*th->data->f)(th->data->param);
 		pthread_mutex_lock(&(th->mutex));
+		free(th->data->param);
+		free(th->data);
 		th->state = TH_READY;
 		pthread_mutex_unlock(&(th->mutex));
 		pthread_mutex_lock(&(tp->mutex));
@@ -70,6 +73,7 @@ int			th_start(t_tpool *tp, int i, void *(*f)(void *))
 {
 	if (pthread_create(&(tp->threads[i].thread), NULL, f, tp) != 0)
 		return (ERROR);
+	pthread_detach(tp->threads[i].thread);
 	return (SUCCESS);
 }
 
