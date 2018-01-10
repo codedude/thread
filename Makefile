@@ -6,7 +6,7 @@
 #    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/02 17:37:24 by vparis            #+#    #+#              #
-#    Updated: 2018/01/09 18:06:46 by valentin         ###   ########.fr        #
+#    Updated: 2018/01/10 22:54:20 by valentin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,10 +18,10 @@ INCD		=	includes
 LIBFTD		=	libft
 
 SRCS		=	$(SRCD)/main.c $(SRCD)/algo.c $(SRCD)/tp_queue.c \
-				$(SRCD)/tp_pool.c $(SRCD)/tp_thread.c
+				$(SRCD)/tp_pool.c $(SRCD)/tp_pool2.c $(SRCD)/tp_thread.c
 OBJS		=	$(patsubst %.c, %.o, $(SRCS))
 
-CFLAGS		+=	-I$(INCD) -I$(LIBFTD)/includes
+CFLAGS		+=	-I$(INCD) -I$(LIBFTD)/includes #-O2
 #Warnigs and debug
 LDFLAGS		+=	-Wall -Wextra -ansi -pedantic -Wno-unused-result -g
 LDLIBS		+=	-L$(LIBFTD) -lft -lpthread
@@ -32,7 +32,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	make -C $(LIBFTD)
-	$(CC) -o $@ $^ $(LDLIBS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ -c $<

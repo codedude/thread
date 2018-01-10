@@ -1,2 +1,1 @@
-valgrind --tool=memcheck --leak-check=full --leak-resolution=high
---show-reachable=yes --show-leak-kinds=all ./thread 8 0 0 1000
+valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --show-leak-kinds=all ./thread 4 0 500

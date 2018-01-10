@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tp_queue.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/02 15:36:45 by vparis            #+#    #+#             */
-/*   Updated: 2018/01/04 12:56:50 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/10 22:43:30 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include "libft.h"
 #include "ft_list.h"
 #include "ft_tpool.h"
 
