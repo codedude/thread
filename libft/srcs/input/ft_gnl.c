@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_gnl.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 18:33:59 by vparis            #+#    #+#             */
-/*   Updated: 2017/12/24 19:30:35 by valentin         ###   ########.fr       */
+/*   Updated: 2018/01/12 13:51:47 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ int					ft_gnl(int const fd, char **line)
 		return (-1);
 	if ((n = read_line(fd_data)) < 0)
 	{
+		ft_lstdel(&(fd_data->data), &ft_lstdel_raw);
 		if (fd_data->previous != NULL)
 			fd_data->previous->next = fd_data->next;
 		else

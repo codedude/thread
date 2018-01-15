@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_input.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/24 19:13:38 by valentin          #+#    #+#             */
-/*   Updated: 2017/12/24 19:15:50 by valentin         ###   ########.fr       */
+/*   Updated: 2018/01/12 13:44:39 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "ft_type.h"
 # include "ft_list.h"
 
-# define BUFF_GNL			(1024)
+# define BUFF_GNL	1024
 
 typedef	struct		s_fd_l {
 	struct s_fd_l	*next;

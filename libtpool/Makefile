@@ -6,46 +6,49 @@
 #    By: vparis <vparis@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/02 17:37:24 by vparis            #+#    #+#              #
-#    Updated: 2018/01/15 10:23:15 by vparis           ###   ########.fr        #
+#    Updated: 2018/01/12 13:52:21 by vparis           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		=	algo
+NAME		=	libtpool.a
 CC			=	gcc
 
 SRCD		=	srcs
 INCD		=	includes
-LIBFTD		=	libft
-LIBTPOOLD	=	libtpool
+LIBFTD		=	../libft
 
-SRCS		=	$(SRCD)/main.c $(SRCD)/algo.c
+SRCS		=	$(SRCD)/tp_queue.c $(SRCD)/tp_thread.c \
+				$(SRCD)/tp_pool.c $(SRCD)/tp_pool2.c
 OBJS		=	$(patsubst %.c, %.o, $(SRCS))
 
-CFLAGS		+=	-I$(INCD) -I$(LIBFTD)/includes -I$(LIBTPOOLD)/includes \
-				-O3 -march=native
-LDFLAGS		+=	-Wall -Wextra -Werror -std=c11 -pedantic -Wno-unused-result
-LDLIBS		+=	-L$(LIBFTD) -L$(LIBTPOOLD) -lft -ltpool -lpthread
+CFLAGS		+=	-I$(LIBFTD)/includes -I$(INCD) -O2
+LDFLAGS		+=	-Wall -Wextra -Werror -ansi -pedantic -Wno-unused-result
+LDLIBS		+=
 
-.PHONY: clean fclean re
+.PHONY: clean fclean re showlib
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	make -C $(LIBFTD)
-	make -C $(LIBTPOOLD)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS)
+	@ar rs $@ $(OBJS)
+	@echo "libtpool - compiled"
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ -c $< $(LDLIBS)
+
+showlib: $(NAME)
+	@ar -t $(NAME)
 
 clean:
-	make -C $(LIBTPOOLD) clean
-	make -C $(LIBFTD) clean
-	@rm -vf $(OBJS)
+	@rm -f $(OBJS)
+	@echo "libtpool - objects cleaned"
 
 fclean: clean
-	make -C $(LIBTPOOLD) __fclean
-	make -C $(LIBFTD) __fclean
-	@rm -vf $(NAME)
+	@rm -f $(NAME)
+	@echo "libtpool - lib cleaned"
+
+__fclean:
+	@rm -f $(NAME)
+	@echo "libtpool - lib cleaned"
 
 re: fclean all

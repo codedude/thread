@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/24 19:05:21 by valentin          #+#    #+#             */
-/*   Updated: 2018/01/02 11:34:20 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/12 13:46:59 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # ifndef M_PI
 #  define M_PI		(3.141592653589793)
 # endif
+# define DEG_TO_RAD (M_PI / 180.)
+# define RAD_TO_DEG (180. / M_PI)
 
 t_u32				ft_abs(t_i32 n);
 t_i32				ft_min(t_i32 a, t_i32 b);
@@ -32,5 +34,9 @@ t_i32				ft_power(t_i32 n, t_i32 power);
 t_u32				ft_sqrt(t_u32 n);
 int					ft_isprime(t_u32 n);
 t_u32				ft_find_next_prime(t_u32 n);
+t_f64				deg_to_rad(t_f64 x);
+t_f64				rad_to_deg(t_f64 x);
+t_f64				ft_cos(t_f64 x);
+t_f64				ft_sin(t_f64 x);
 
 #endif

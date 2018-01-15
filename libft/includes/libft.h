@@ -6,7 +6,7 @@
 /*   By: vparis <vparis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 22:22:13 by vparis            #+#    #+#             */
-/*   Updated: 2018/01/02 11:35:59 by vparis           ###   ########.fr       */
+/*   Updated: 2018/01/12 13:45:17 by vparis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ char				*ft_strcat2(char *dest, const char *src1, const char *src2);
 char				*ft_strnew_fast(size_t size);
 char				**ft_strsplit_whitespaces(char const *s);
 char				**ft_strsplit_str(char const *s, char const *charset);
+void				ft_strsplit_free(char **str);
 
 /*
 ** Number/String conversion
